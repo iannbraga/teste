@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>O Que Tem Pra Hoje?</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      background: #fafafa;
+    }
+    .hero {
+      background-color: #ffdd57;
+    }
+    .mockup {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Hero -->
+    <section class="hero is-medium is-bold">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title is-2">🍳 O Que Tem Pra Hoje?</h1>
+          <h2 class="subtitle is-4">Descubra receitas incríveis com os ingredientes que você já tem em casa.</h2>
+          <button class="button is-primary is-medium" @click="formVisible = true">
+            Quero ser avisado!
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal" :class="{ 'is-active': formVisible }">
+      <div class="modal-background" @click="closeModal"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Seja o primeiro a testar!</p>
+          <button class="delete" aria-label="close" @click="closeModal"></button>
+        </header>
+        <section class="modal-card-body">
+          <form @submit.prevent="submitForm">
+            <div class="field">
+              <label class="label">Seu nome</label>
+              <div class="control">
+                <input class="input" type="text" v-model="name" required />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Seu e-mail</label>
+              <div class="control">
+                <input class="input" type="email" v-model="email" required />
+              </div>
+            </div>
+            <div class="field">
+              <button class="button is-link">Enviar</button>
+            </div>
+            <p class="help is-success" v-if="submitted">✅ Obrigado! Você será avisado em breve.</p>
+          </form>
+        </section>
+      </div>
+    </div>
+
+    <!-- Substitua a seção de demonstração pelo código abaixo -->
+    <section class="section">
+      <div class="container">
+        <h3 class="title is-4 has-text-centered">👨‍🍳 Teste como vai funcionar</h3>
+        <div class="columns is-centered">
+          <div class="column is-half box">
+            <div>
+              <label class="label">Digite os ingredientes que você tem:</label>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input class="input" type="text" v-model="newIngredient" placeholder="Ex: arroz, ovo" @keyup.enter="addIngredient">
+                </div>
+                <div class="control">
+                  <button class="button is-info" @click="addIngredient">Adicionar</button>
+                </div>
+              </div>
+              <div class="tags are-medium">
+                <span class="tag is-warning" v-for="(item, index) in ingredients" :key="index">
+                  {{ item }}
+                  <button class="delete is-small" @click="removeIngredient(index)"></button>
+                </span>
+              </div>
+            </div>
+
+            <hr />
+
+            <div v-if="ingredients.length">
+              <h4 class="subtitle is-5">🍽️ Receitas sugeridas:</h4>
+              <ul>
+                <li v-for="(recipe, i) in filteredRecipes" :key="i">
+                  ✅ <strong>{{ recipe.name }}</strong> — {{ recipe.ingredients.join(', ') }}
+                </li>
+              </ul>
+              <p v-if="filteredRecipes.length === 0" class="has-text-grey">Nenhuma receita encontrada com esses ingredientes.</p>
+            </div>
+            <div v-else class="has-text-grey">Adicione ingredientes para ver sugestões de receitas.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demonstração -->
+    <!-- <section class="section">
+      <div class="container">
+        <h3 class="title is-4 has-text-centered">👀 Veja como vai funcionar</h3>
+        <div class="columns is-centered">
+          <div class="column is-half has-text-centered">
+            <div class="mockup">
+              <video width="100%" autoplay muted loop playsinline>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Seu navegador não suporta vídeo.
+              </video>
+            </div>
+            <p class="has-text-grey mt-2">Demonstração do protótipo (substitua com seu vídeo)</p>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          © 2025 — <strong>O Que Tem Pra Hoje?</strong> · Feito com 💛 para quem ama comida caseira.
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Vue App -->
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          formVisible: false,
+          name: '',
+          email: '',
+          submitted: false,
+          newIngredient: '',
+          ingredients: [],
+          recipes: [
+            { name: 'Omelete Simples', ingredients: ['ovo', 'sal', 'óleo'] },
+            { name: 'Arroz de Forno', ingredients: ['arroz', 'queijo', 'presunto'] },
+            { name: 'Panqueca Doce', ingredients: ['leite', 'ovo', 'farinha'] },
+            { name: 'Salada Refrescante', ingredients: ['alface', 'tomate', 'cenoura'] },
+            { name: 'Bolo de Banana', ingredients: ['banana', 'ovo', 'farinha'] },
+          ]
+        };
+      },
+      computed: {
+        filteredRecipes() {
+          return this.recipes.filter(recipe =>
+            recipe.ingredients.every(ing => this.ingredients.includes(ing))
+          );
+        }
+      },
+      methods: {
+        closeModal() {
+          this.formVisible = false;
+          this.submitted = false;
+          this.name = '';
+          this.email = '';
+        },
+        submitForm() {
+          console.log("Enviado:", this.name, this.email);
+          this.submitted = true;
+        },
+        addIngredient() {
+          const item = this.newIngredient.trim().toLowerCase();
+          if (item && !this.ingredients.includes(item)) {
+            this.ingredients.push(item);
+          }
+          this.newIngredient = '';
+        },
+        removeIngredient(index) {
+          this.ingredients.splice(index, 1);
+        }
+      }
+
+    }).mount('#app');
+  </script>
+</body>
+</html>

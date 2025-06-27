@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minha Página Rápida - Landing Page</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+  />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app" class="section">
+    <div class="container">
+      <!-- Header -->
+      <section class="hero is-primary has-text-centered">
+        <div class="hero-body">
+          <h1 class="title is-2">Sua Página de Vendas Pronta em 48h</h1>
+          <h2 class="subtitle is-5">
+            Sem precisar de site, nem redes sociais complicadas.
+          </h2>
+          <button
+            class="button is-link is-large mt-4"
+            @click="goToWhatsapp"
+          >
+            Me chama no WhatsApp para começar
+          </button>
+        </div>
+      </section>
+
+      <!-- Problema -->
+      <section class="section">
+        <h3 class="title is-3 has-text-centered">O Problema</h3>
+        <p class="has-text-centered is-size-5">
+          Muitos vendedores perdem vendas porque o cliente não entende o que está sendo vendido ou como comprar. Montar um site é caro, demorado e difícil.
+        </p>
+      </section>
+
+      <!-- Solução -->
+      <section class="section has-background-light">
+        <h3 class="title is-3 has-text-centered">A Solução</h3>
+        <p class="has-text-centered is-size-5">
+          Criamos para você uma página simples e bonita com seus produtos, seus dados e botões de WhatsApp e Pix. É só mandar suas informações e a página fica pronta.
+        </p>
+      </section>
+
+      <!-- Como funciona -->
+      <section class="section">
+        <h3 class="title is-3 has-text-centered">Como Funciona</h3>
+        <ol class="content is-medium">
+          <li><strong>1.</strong> Você escolhe o tipo de página (delivery, roupas, cursos, etc.)</li>
+          <li><strong>2.</strong> Envia suas informações por WhatsApp ou formulário</li>
+          <li><strong>3.</strong> Recebe a página pronta em até 48h</li>
+          <li><strong>4.</strong> Pode divulgar por link no Instagram, status, QR code ou cartão</li>
+        </ol>
+      </section>
+
+      <!-- Demonstração -->
+      <section class="section has-background-light">
+        <h3 class="title is-3 has-text-centered">Demonstração</h3>
+        <div class="columns is-centered">
+          <div class="column is-half">
+            <figure class="image is-4by3" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+              <img
+                src="https://i.imgur.com/NM6uKzn.png"
+                alt="Exemplo de landing page simples"
+              />
+            </figure>
+            <p class="has-text-centered mt-2 is-italic is-size-7 has-text-grey">
+              Modelo simples de página para vendas pelo WhatsApp.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preços -->
+      <section class="section">
+        <h3 class="title is-3 has-text-centered">Preços</h3>
+        <div class="columns is-centered">
+          <div class="column is-4">
+            <div class="box has-text-centered">
+              <p class="title is-4">Página simples</p>
+              <p class="subtitle is-5">R$ 79</p>
+              <p>Entrega em até 48 horas</p>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="box has-text-centered">
+              <p class="title is-4">Página personalizada</p>
+              <p class="subtitle is-5">R$ 149</p>
+              <p>Com domínio próprio e suporte</p>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="box has-text-centered">
+              <p class="title is-4">Atualizações e suporte</p>
+              <p class="subtitle is-5">R$ 19/mês</p>
+              <p>Para manter sua página sempre atualizada</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Final -->
+      <section class="section has-background-primary has-text-centered">
+        <button
+          class="button is-link is-large"
+          @click="goToWhatsapp"
+        >
+          Quero minha página de vendas!
+        </button>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer has-text-centered mt-6">
+        <p>© 2025 Minha Página Rápida - Criado por você</p>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      methods: {
+        goToWhatsapp() {
+          // Substitua pelo seu número com código do Brasil e DDD, ex: 5511999999999
+          const numero = '5511999999999';
+          const texto = encodeURIComponent('Olá! Quero criar minha página de vendas.');
+          window.open(`https://wa.me/${numero}?text=${texto}`, '_blank');
+        },
+      },
+    }).mount('#app');
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendamento Simples para Clínicas</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- HERO com botão -->
+    <section class="hero is-info is-medium">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title">Transforme seu consultório com agendamento digital</h1>
+          <p class="subtitle">Simples, rápido e direto no WhatsApp. Ideal para clínicas e profissionais autônomos.</p>
+          <button class="button is-light is-medium" @click="showModal = true">Quero ser avisado</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal com formulário de cadastro -->
+    <div class="modal" :class="{ 'is-active': showModal }">
+      <div class="modal-background" @click="showModal = false"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cadastre-se para ser avisado</p>
+          <button class="delete" aria-label="close" @click="showModal = false"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label">Nome</label>
+            <div class="control">
+              <input class="input" type="text" placeholder="Seu nome" v-model="signup.name" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">E-mail</label>
+            <div class="control">
+              <input class="input" type="email" placeholder="email@exemplo.com" v-model="signup.email" />
+            </div>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success" @click="submitSignup">Cadastrar</button>
+          <button class="button" @click="showModal = false">Cancelar</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Simulação do app de agendamento -->
+    <section class="section">
+      <div class="container">
+        <h2 class="title is-4">Simule um agendamento</h2>
+
+        <div class="columns">
+          <div class="column is-half">
+            <div class="field">
+              <label class="label">Nome</label>
+              <div class="control">
+                <input class="input" type="text" placeholder="Nome do paciente" v-model="form.name">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Telefone</label>
+              <div class="control">
+                <input class="input" type="tel" placeholder="(99) 99999-9999" v-model="form.phone">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Serviço</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select v-model="form.service" @change="updateSlots">
+                    <option value="">Selecione</option>
+                    <option>Manicure</option>
+                    <option>Pedicure</option>
+                    <option>Cabeleireiro</option>
+                    <option>Barbearia</option>
+                    <option>Limpeza de pele</option>
+                    <option>Massagem</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field" v-if="form.service">
+              <label class="label">Horário</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select v-model="form.time">
+                    <option disabled value="">Selecione um horário</option>
+                    <option v-for="slot in availableSlots" :key="slot" :value="slot">
+                      {{ slot }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary" @click="addAppointment">Agendar</button>
+              </div>
+            </div>
+
+            <div class="notification is-success is-light mt-3" v-if="successMsg">
+              Agendamento realizado com sucesso!
+            </div>
+          </div>
+
+          <div class="column is-half">
+            <h3 class="title is-5">Agenda do dia</h3>
+            <table class="table is-fullwidth is-striped">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Serviço</th>
+                  <th>Horário</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(a, i) in appointments" :key="i">
+                  <td>{{ a.name }}</td>
+                  <td>{{ a.service }}</td>
+                  <td>{{ a.time }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Vue 3 App -->
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          showModal: false,
+          signup: {
+            name: '',
+            email: ''
+          },
+          form: {
+            name: '',
+            phone: '',
+            service: '',
+            time: ''
+          },
+          appointments: [],
+          availableSlots: [],
+          successMsg: false,
+          slotsPorServico: {
+            "Manicure": ["09:00", "10:00", "11:00", "14:00", "15:00"],
+            "Pedicure": ["10:00", "11:00", "13:00", "16:00"],
+            "Cabeleireiro": ["09:30", "11:30", "13:30", "15:30"],
+            "Barbearia": ["09:00", "10:30", "12:00", "14:30", "16:00"],
+            "Limpeza de pele": ["10:00", "11:00", "13:00"],
+            "Massagem": ["09:00", "11:00", "14:00", "16:00"]
+          }
+        };
+      },
+      methods: {
+        updateSlots() {
+          const allSlots = this.slotsPorServico[this.form.service] || [];
+          const used = this.appointments
+            .filter(a => a.service === this.form.service)
+            .map(a => a.time);
+          this.availableSlots = allSlots.filter(t => !used.includes(t));
+          this.form.time = '';
+        },
+        addAppointment() {
+          const { name, phone, time, service } = this.form;
+          if (name && phone && time && service) {
+            this.appointments.push({ name, phone, time, service });
+            this.updateSlots();
+            this.form.name = '';
+            this.form.phone = '';
+            this.form.time = '';
+            this.form.service = '';
+            this.successMsg = true;
+            setTimeout(() => this.successMsg = false, 3000);
+          }
+        },
+        submitSignup() {
+          if (this.signup.name && this.signup.email) {
+            console.log("Cadastro para notificação:", this.signup);
+            alert("Cadastro realizado com sucesso! Entraremos em contato quando estiver pronto.");
+            this.signup.name = '';
+            this.signup.email = '';
+            this.showModal = false;
+          }
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
